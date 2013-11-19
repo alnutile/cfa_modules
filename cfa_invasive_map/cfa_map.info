@@ -1,0 +1,6 @@
+name = Invasive Species Map
+description =  Mapping module for invasive pests
+core = 7.x
+package = Invasives
+
+files[] = cfa_map.module

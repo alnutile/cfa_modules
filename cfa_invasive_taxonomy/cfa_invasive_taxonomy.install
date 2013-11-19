@@ -1,0 +1,35 @@
+<?php
+/**
+* Implements hook_install().
+*/
+function cfa_invasive_taxonomy_install() {
+  $new_vocab = (object) array(
+    'name' => 'Invasive Pests',
+    'description' => 'This vocabulary provides a taxonomy for use with the invasives tracking system',
+    'machine_name' => 'invasive_vocab',
+  );
+  taxonomy_vocabulary_save($new_vocab);      
+}
+
+ // Create a field
+ $field = array(
+    'field_name' => 'invasive_image',
+    'type' => 'image',
+    'label' => $t('Label')
+  );
+  field_create_field($field);
+ 
+  // Attach the field to our taxonomy entity
+  $instance = array(
+      'field_name' => 'invasive_image',
+      'entity_type' => 'taxonomy_term',
+      'bundle' => 'invasive_vocab',
+      'label' => $t('Label'),
+      'description' => $t('Description'),
+      'required' => true,
+      'widget' => array(
+        'type' => 'text_textfield',
+        'weight' => 3
+      )
+  );
+  field_create_instance($instance);
