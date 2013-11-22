@@ -1,0 +1,47 @@
+<?php
+
+function cfa_invasive_map_init() {
+    drupal_add_js('http://maps.googleapis.com/maps/api/js?sensor=false', 'external');
+    drupal_add_js(drupal_get_path('module', 'cfa_invasive_map') . '/js/cfa_map.js');
+    
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function cfa_invasive_map_menu() {
+  $items = array();
+
+  $items['invasives/map'] = array(
+    'title' => 'Page title here',
+    'description' => 'Description here, mostly used for admin pages',
+    'page callback' => 'cfa_invasive_map_callback',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+   
+  );
+  return $items;
+}
+
+function cfa_invasive_map_callback($arg) {//this function generates the page content  
+  $result = db_query('select field_coordinates_lat,field_coordinates_lon,field_trap_count_value from {field_data_field_coordinates} as latlng left join {field_data_field_trap_location_geofield} as loc on latlng.entity_id=loc.field_trap_location_geofield_target_id left join {field_data_field_trap_count} as trap on loc.entity_id=trap.entity_id');
+  $coordinates = array();
+  foreach ($result as $key => $term) {
+   // dpm($term);
+    $coordinates[$key]['center']['lat'] = $term->field_coordinates_lat;
+    $coordinates[$key]['center']['lon'] = $term->field_coordinates_lon;
+    $coordinates[$key]['count'] = $term->field_trap_count_value;
+  }
+  $title = t('Map for @arg', array('@arg' => $arg));
+  $type = 'ul';
+  // The following attributes apply to the list tag (e.g., <ol> or <ul>)
+  $attributes = array(
+  'id' => 'map',
+  'class' => 'invasive-map', // a string or indexed (string) array with the classes for the list tag
+  );
+  dpm($coordinates);
+  drupal_add_js(array('cfa_invasive_map' => array('coordinates' => $coordinates)), array('type' => 'setting'));
+  drupal_add_js(drupal_get_path('module', 'cfa_invasive_map') . '/js/cfa_map.js');
+  return theme_item_list(array('items' => $coordinates, 'title' => $title, 'type' => $type, 'attributes' => $attributes)) . t('<div id="map-canvas" style="width: 100%; height: 200px;"></div>The arg is @arg', array('@arg' => $arg));
+}
+

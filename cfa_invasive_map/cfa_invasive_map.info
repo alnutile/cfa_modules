@@ -3,4 +3,4 @@ description =  Mapping module for invasive pests
 core = 7.x
 package = Invasives
 
-files[] = cfa_map.module
+files[] = cfa_invasive_map.module
