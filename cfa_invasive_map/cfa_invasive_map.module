@@ -12,7 +12,7 @@ function cfa_invasive_map_init() {
 function cfa_invasive_map_menu() {
   $items = array();
 
-  $items['invasives/map'] = array(
+  $items['invasives/map/%'] = array(
     'title' => 'Page title here',
     'description' => 'Description here, mostly used for admin pages',
     'page callback' => 'cfa_invasive_map_callback',
@@ -23,7 +23,10 @@ function cfa_invasive_map_menu() {
   return $items;
 }
 
-function cfa_invasive_map_callback($arg) {//this function generates the page content  
+/**
+ * This function generates the page content  
+ */
+function cfa_invasive_map_callback($arg) {
   $result = db_query('select field_coordinates_lat,field_coordinates_lon,field_trap_count_value from {field_data_field_coordinates} as latlng left join {field_data_field_trap_location_geofield} as loc on latlng.entity_id=loc.field_trap_location_geofield_target_id left join {field_data_field_trap_count} as trap on loc.entity_id=trap.entity_id');
   $coordinates = array();
   foreach ($result as $key => $term) {
